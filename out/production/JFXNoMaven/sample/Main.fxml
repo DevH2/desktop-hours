@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXSnackbar?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<?import com.jfoenix.controls.JFXScrollPane?>
+<GridPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
+    <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+    </columnConstraints>
+    <rowConstraints>
+    <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+   <children>
+      <VBox fx:id="left" prefHeight="200.0" prefWidth="100.0" styleClass="left" stylesheets="@application.css">
+         <children>
+            <HBox alignment="CENTER">
+               <children>
+                  <Label fx:id="leftTitle" styleClass="left-title" stylesheets="application.css" text="Label - Date" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <TextField fx:id="searchBar" promptText="Search user" style="-fx-background-color: #212121;" styleClass="search-bar">
+                     <effect>
+                        <DropShadow offsetX="-2.0" offsetY="-2.0">
+                           <input>
+                              <DropShadow offsetX="2.0" offsetY="2.0">
+                                 <color>
+                                    <Color red="0.339473694562912" green="0.339473694562912" blue="0.339473694562912" />
+                                 </color>
+                              </DropShadow>
+                           </input>
+                        </DropShadow>
+                     </effect></TextField>
+               </children>
+            </HBox>
+            <ScrollPane>
+               <content>
+                  <VBox styleClass="users-container" stylesheets="application.css" fx:id="usersContainer" alignment="TOP_CENTER" prefHeight="300.0" prefWidth="298.0" />
+               </content>
+            </ScrollPane>
+         </children></VBox>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="right" stylesheets="@application.css" GridPane.columnIndex="1">
+         <children>
+            <Label styleClass="title" stylesheets="application.css" text="Application Title" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
+            <TabPane prefWidth="300.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="60">
+               <tabs>
+                   <Tab text="Sign In">
+                     <content>
+                        <VBox fx:id="signInContainer" alignment="CENTER" style="-fx-background-radius: 8px;" styleClass="sign-in-container" stylesheets="application.css">
+                           <children>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <VBox>
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="100">
+                                             <children>
+                                                <JFXPasswordField fx:id="signInInput" alignment="BOTTOM_LEFT" promptText="Enter Password" style="-fx-font-size: 16;" styleClass="sign-in-input" stylesheets="application.css" />
+                                             </children>
+                                          </HBox>
+                                          <JFXCheckBox styleClass="password-checkbox" stylesheets="application.css" text="Show Password" textFill="#4d4d4d">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font></JFXCheckBox>
+                                       </children>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <JFXButton fx:id="signInButton" buttonType="RAISED" onAction="#handleSignIn" ripplerFill="#212121" style="-fx-background-color: #ff073a;" text="SIGN IN" textFill="WHITESMOKE">
+                                       <font>
+                                          <Font name="System Bold" size="16.0" />
+                                       </font>
+                                    </JFXButton>
+                                 </children>
+                              </HBox>
+                              <JFXSnackbar fx:id="snackBar" prefWidth="0.0" />
+                           </children>
+                           <effect>
+                              <DropShadow offsetX="6.0" offsetY="6.0">
+                                 <color>
+                                    <Color red="0.08684210479259491" green="0.08684210479259491" blue="0.08684210479259491" />
+                                 </color>
+                                 <input>
+                                    <DropShadow offsetX="-6.0" offsetY="-6.0">
+                                       <color>
+                                          <Color red="0.20263157784938812" green="0.20263157784938812" blue="0.20263157784938812" />
+                                       </color>
+                                    </DropShadow>
+                                 </input>
+                              </DropShadow>
+                           </effect>
+                        </VBox>
+                     </content>
+                   </Tab>
+                   <Tab text="Admin Panel">
+                       <content>
+                           <AnchorPane fx:id="userPanel" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                               <children>
+
+
+                               </children></AnchorPane>
+                       </content>
+                   </Tab>
+                   <Tab text="Monday Cleanup">
+                       <content>
+                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <JFXTextArea layoutX="14.0" layoutY="14.0" prefHeight="186.0" prefWidth="211.0" />
+                           </children></AnchorPane>
+                       </content>
+                   </Tab>
+               </tabs></TabPane>
+         </children>
+      </AnchorPane>
+   </children>
+</GridPane>
