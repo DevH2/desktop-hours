@@ -6,10 +6,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-padding: 1em;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.UserCardController">
+<VBox fx:id="userCard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-padding: 1em;" styleClass="user-card" stylesheets="application.css" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="usernameLabel" text="Username Placeholder" />
-      <Label fx:id="signInStatusLabel" text="SignInStatus" />
+      <Label fx:id="usernameLabel" styleClass="name-label" stylesheets="application.css" text="Username Placeholder" />
+      <Label fx:id="signInStatusLabel" styleClass="other-labels" stylesheets="application.css" text="SignInStatus" />
       <GridPane>
         <columnConstraints>
           <ColumnConstraints hgrow="ALWAYS" />
@@ -21,8 +21,8 @@
           <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label fx:id="timeInLabel" text="TimeIn" />
-            <Label fx:id="totalTimeLabel" text="TotalTime" GridPane.columnIndex="1" />
+            <Label fx:id="timeInLabel" styleClass="other-labels" stylesheets="application.css" text="TimeIn" />
+            <!-- <Label styleClass="other-labels" stylesheets="application.css" fx:id="totalTimeLabel" text="TotalTime" GridPane.columnIndex="1" /> -->
          </children>
       </GridPane>
    </children>

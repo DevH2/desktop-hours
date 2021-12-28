@@ -21,7 +21,6 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<?import com.jfoenix.controls.JFXScrollPane?>
 <GridPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
     <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
@@ -54,9 +53,9 @@
                      </effect></TextField>
                </children>
             </HBox>
-            <ScrollPane>
+            <ScrollPane hbarPolicy="NEVER" pannable="true" styleClass="scroll-pane" stylesheets="application.css">
                <content>
-                  <VBox styleClass="users-container" stylesheets="application.css" fx:id="usersContainer" alignment="TOP_CENTER" prefHeight="300.0" prefWidth="298.0" />
+                  <VBox fx:id="usersContainer" alignment="CENTER" styleClass="users-container" stylesheets="application.css" />
                </content>
             </ScrollPane>
          </children></VBox>

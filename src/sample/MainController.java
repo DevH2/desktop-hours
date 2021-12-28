@@ -51,13 +51,23 @@ public class MainController implements Initializable {
     }
 
 
-    public void handleSignIn(ActionEvent event) throws IOException {
-        System.out.println(signInInput.getText());
+    public void handleSignIn(ActionEvent event) throws IOException, InterruptedException {
         UserData currentUser = UserDataAccess.getInstance().get(signInInput.getText());
-        System.out.println(currentUser.getIsSignedIn());
-        UserDataAccess.getInstance().signInOrOut(currentUser.getIsSignedIn(), signInInput.getText(), currentUser.getName());
+        String signedInOrOut = UserDataAccess.getInstance().signInOrOut(currentUser.getIsSignedIn(), signInInput.getText(), currentUser.getName());
+        if(signedInOrOut.equals("Successfully signed in")){
+            getUserPane(currentUser.getName()).getTimeline().playFromStart();
+            System.out.println("playing timeline");
+        } else if(signedInOrOut.equals("Successfully signed out")){
+            System.out.println("Stopped timeline");
+            getUserPane(currentUser.getName()).getTimeline().pause();
+        } else return;
         signInInput.setText("");
-        refreshListView(); //Doing this synchronously also causes the Rippler to wait
+        //Refreshing deletes the panes that had these functions called from sad, so you have to change refreshListView
+        //try {
+            //refreshListView();
+        //} catch (MalformedURLException e) {
+            //e.printStackTrace();
+        //} //Doing this synchronously also causes the Rippler to wait
     }
 
     @Override
@@ -76,7 +86,7 @@ public class MainController implements Initializable {
 
     private void refreshListView() throws MalformedURLException {
         users = UserDataAccess.getInstance().getAll();
-        usersContainer.getChildren().removeAll();
+        usersContainer.getChildren().clear();
         users.stream().forEach(user -> {
             UserPane component = null;
             try {
@@ -119,5 +129,13 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         return;
+    }
+
+    private UserPane getUserPane(String name) throws IOException, InterruptedException {
+        LinkedHashMap<String, UserPane> userPanes = new LinkedHashMap<>();
+        usersContainer.getChildren().forEach(userPane -> {
+            userPanes.put(((UserPane)(userPane)).getName(),((UserPane)(userPane)));
+        });
+        return userPanes.get(name);
     }
 }

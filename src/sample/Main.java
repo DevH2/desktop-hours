@@ -14,12 +14,14 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.time.LocalTime;
 
 public class Main extends Application {
 
@@ -35,12 +37,20 @@ public class Main extends Application {
     @FXML
     private TextField searchBar;
 
+    @FXML
+    private VBox usersContainer;
+
+
     private final ChangeListener<Number> onWidthResize = new ChangeListener<>() {
         @Override
         public void changed(ObservableValue<? extends Number> observableValue, Number prevWidth, Number currentWidth) {
             signInButton.setMinWidth(currentWidth.doubleValue()/3.5d);
             signInInput.setMinWidth(currentWidth.doubleValue()/2.8d);
             searchBar.setMinWidth(currentWidth.doubleValue()/4.2d);
+            usersContainer.setMinWidth(currentWidth.doubleValue()/2d - 96);
+            usersContainer.getChildren().forEach(userPane ->
+                    ((VBox)((UserPane)(userPane)).getChildren().get(0)).setMinWidth(usersContainer.getMinWidth())
+            );
         }
     };;
     private final ChangeListener<Number> onHeightResize = new ChangeListener<>(){
@@ -58,6 +68,7 @@ public class Main extends Application {
         //signInButton.styleProperty().bind(Bindings.concat("-fx-font"));
         signInInput = (JFXPasswordField) (primaryStage.getScene().lookup("#signInInput"));
         searchBar = (TextField) (primaryStage.getScene().lookup("#searchBar"));
+        usersContainer = (VBox) (primaryStage.getScene().lookup("#usersContainer"));
         primaryStage.getScene().widthProperty().addListener(onWidthResize);
         primaryStage.getScene().heightProperty().addListener(onHeightResize);
         System.out.println(primaryStage.getScene() + " Primary Stage scene");

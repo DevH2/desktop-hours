@@ -123,7 +123,7 @@ public class UserDataAccess {
         return new User(0, "Dummy user", 0, 0,0,0);
     }
 
-    public void signInOrOut(boolean signInStatus, String password, String name){
+    public String signInOrOut(boolean signInStatus, String password, String name){
         this.password = password;
         HashMap<String, String> requestBody = new HashMap<>();
         requestBody.put("password", this.password);
@@ -139,9 +139,11 @@ public class UserDataAccess {
                 signOutResponse = httpClient.send(signOutRequest, HttpResponse.BodyHandlers.ofString());
                 System.out.println(signOutResponse.body().toString());
                 System.out.println("Signed out " + name);
+                return "Successfully signed out";
             } catch(IOException | InterruptedException e) {
                 System.out.println("Could not sign out " + name);
                 e.printStackTrace();
+                return "Error";
             }
         } else {
             signInRequest = HttpRequest.newBuilder()
@@ -153,12 +155,13 @@ public class UserDataAccess {
                 signInResponse = httpClient.send(signInRequest, HttpResponse.BodyHandlers.ofString());
                 System.out.println(signInResponse.body().toString());
                 System.out.println("Signed in " + name);
+                return "Successfully signed in";
             } catch (InterruptedException | IOException e) {
                 System.out.println("Could not sign in " + name);
                 e.printStackTrace();
+                return "Error";
             }
         }
-        return;
     }
     public void update(){
 
