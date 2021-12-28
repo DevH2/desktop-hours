@@ -5,11 +5,15 @@ import com.jfoenix.controls.JFXSnackbar;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -62,13 +66,23 @@ public class MainController implements Initializable {
             getUserPane(currentUser.getName()).getTimeline().pause();
         } else return;
         signInInput.setText("");
-        //Refreshing deletes the panes that had these functions called from sad, so you have to change refreshListView
-        //try {
-            //refreshListView();
-        //} catch (MalformedURLException e) {
-            //e.printStackTrace();
-        //} //Doing this synchronously also causes the Rippler to wait
+
+        try {
+            updateListView();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        //Doing this synchronously also causes the Rippler to wait
     }
+
+    public void handleCreateUser(){
+
+    }
+
+    public void handleDeleteUser(){
+
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -76,18 +90,40 @@ public class MainController implements Initializable {
         leftTitle.setText("Users - " + formattedDate);
 
         loadFXMLComponents();
+
         try {
-            refreshListView();
+            initListView();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
+
         //usersContainer.getChildren().stream().forEach(userPane -> { ((UserPane) userPane).initLabels(); });
     }
+    private void updateListView() throws MalformedURLException {
+        users = UserDataAccess.getInstance().getAll();
+        users.forEach(user -> {
+            try {
+                //Need to resolve updating total time not only when the timer is moving
+                UserPane pane = getUserPane(user.getName());
+                pane.setTotalTime(user.getTotalTime());
+                //Resorting to changing prop here to update totalTime on signout
+                // as you can't bind 2 properties to one unless its a BooleanProp.
+                String currentValue = pane.getDisplayedTimeInProp().getValue();
+                pane.getDisplayedTimeInProp().setValue(currentValue.split(" ")[0] +" "+ user.getTotalTime());
 
-    private void refreshListView() throws MalformedURLException {
+                pane.getSignInStatusLabel().setText(user.getIsSignedIn() ? "SIGNED OUT" : "SIGNED IN");
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    //Formerly known as refreshListView()
+    private void initListView() throws MalformedURLException {
         users = UserDataAccess.getInstance().getAll();
         usersContainer.getChildren().clear();
-        users.stream().forEach(user -> {
+        users.forEach(user -> {
             UserPane component = null;
             try {
                 component = new UserPane(user.getName(), user.getIsSignedIn(), user.getTimeIn(), user.getTotalTime());
@@ -97,6 +133,7 @@ public class MainController implements Initializable {
             }
             usersContainer.getChildren().add(component);
         });
+
         usersContainer.getChildren().forEach(userPane -> {
             ((UserPane) userPane).initLabels(
                     ((UserPane) userPane).getName(),
@@ -104,6 +141,9 @@ public class MainController implements Initializable {
                     ((UserPane) userPane).getTimeIn(),
                     ((UserPane) userPane).getTotalTime()
             );
+            if(!((UserPane)(userPane)).getSignInStatus()){
+                ((UserPane)(userPane)).getTimeline().play();
+            }
             //System.out.println(userPane);
         });
         return;
@@ -111,11 +151,12 @@ public class MainController implements Initializable {
 
     private void showSnackBar(String message){
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(1000),
+                Duration.seconds(1),
                 actionEvent -> {
                     snackBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(message)));
                 })
         );
+        timeline.setCycleCount(1);
         timeline.play();
         snackBar.close();
         return;

@@ -4,10 +4,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -47,23 +44,22 @@ public class UserPane extends VBox {
     private long timeIn, totalTime;
     private boolean signInStatus;
     private int displayedTimeIn;
-    private SimpleStringProperty displayedTimeInProp = new SimpleStringProperty(""+displayedTimeIn);
+    private SimpleStringProperty displayedTimeInProp;
     public UserPane(String name, boolean signInStatus, long timeIn, long totalTime) throws IOException, InterruptedException {
-        displayedTimeIn = 0;
-        timeline = new Timeline();
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
-            displayedTimeIn++;
-            displayedTimeInProp.setValue(displayedTimeIn+"");
-            System.out.println("Timeline running " + displayedTimeInProp.getValue());
-            System.out.println(timeInLabel.textProperty().toString());
-        }));
-        timeline.setCycleCount(Animation.INDEFINITE);
-
         //Initialize userContainer values
         this.name = name;
         this.signInStatus = signInStatus;
         this.timeIn = timeIn;
         this.totalTime = totalTime;
+        displayedTimeIn = (int) (timeIn/1000);
+        displayedTimeInProp = new SimpleStringProperty(displayedTimeIn + " " + totalTime);
+        timeline = new Timeline();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
+            displayedTimeIn++;
+            displayedTimeInProp.setValue((displayedTimeIn*1000+timeIn) + " " + this.totalTime);
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+
         //below is null
         this.getChildren().add(userContainer);
         //initLabels();
@@ -80,33 +76,46 @@ public class UserPane extends VBox {
         timeInLabel.setText(displayedTimeIn + " " + totalTime);//too lazy to deal with adaptability for totalTimeLabel
         timeInLabel.textProperty().bind(displayedTimeInProp);
         //totalTimeLabel.setText(totalTime + "");
+
     }
+
     public String getName(){
         return name;
     }
+
     public boolean getSignInStatus(){
         return signInStatus;
     }
+
     public long getTimeIn(){
         return timeIn;
     }
+
     public long getTotalTime(){
         return totalTime;
     }
+    public void setTotalTime(long totalTime){
+        this.totalTime = totalTime;
+    }
+
     public ReadOnlyObjectProperty<Scene> getSceneProperty(){
         return userContainer.sceneProperty();
     }
-    public void update(){
-        //Update and format time
-        displayedTimeIn++;
 
-        timeInLabel.setText(String.valueOf(displayedTimeIn));
-    }
     public Timeline getTimeline(){
         return timeline;
     }
 
+    public Label getSignInStatusLabel(){
+        return signInStatusLabel;
+    }
 
+    public Label getTimeInLabel(){
+        return timeInLabel;
+    }
 
+    public SimpleStringProperty getDisplayedTimeInProp(){
+        return displayedTimeInProp;
+    }
 }
 

@@ -35,5 +35,7 @@ public class User {
     public int getMeetings(){
         return meetings;
     }
+
+
 }
 
