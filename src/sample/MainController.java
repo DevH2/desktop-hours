@@ -36,6 +36,9 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +50,7 @@ public class MainController implements Initializable {
 
     private List <User> users = UserDataAccess.getInstance().getAll();
     private ObservableList<MondayCleaner> mondayCleaners;
+    private Connection connection = MondayCleanerDataAccess.getConnection();
 
     //FXML
     @FXML
@@ -73,6 +77,8 @@ public class MainController implements Initializable {
     private JFXTreeTableColumn timeOutColumn;
     @FXML
     private JFXTreeTableView treeTableView;
+    @FXML
+    private TextField tableViewSearchBar;
 
 
     public MainController() throws MalformedURLException {
@@ -100,6 +106,7 @@ public class MainController implements Initializable {
     }
 
     public void addMondayCleanupEntry(ActionEvent event) {
+        //For add and del, still need to refresh db entries
         String day = DayOfWeek.from(LocalDate.now()).name();
         if(!day.equals("MONDAY")){
             System.out.println("Today is not Monday");
@@ -111,14 +118,18 @@ public class MainController implements Initializable {
         }
         MondayCleaner entry = new MondayCleaner("Enter name","Enter time in","Enter time out");
         mondayCleaners.add(entry);
+        MondayCleanerDataAccess.insert(entry);
     }
 
     public void deleteMondayCleanupEntry(ActionEvent event) {
-        if(mondayCleaners.size() == 0) return;
-        mondayCleaners.remove(mondayCleaners.size()-1);
+        if(mondayCleaners.size() == 0 || tableViewSearchBar.getText().isEmpty()) return;
+        //JFXTreeTableView and ObservableList is op :0
+        MondayCleanerDataAccess.deleteByName(tableViewSearchBar.getText());
+        mondayCleaners.remove(getMondayCleaner(tableViewSearchBar.getText()));
     }
 
     public void emailMondayCleanupRoster(){
+        //Forming the string
         StringBuilder builder = new StringBuilder();
         mondayCleaners.forEach(mondayCleaner -> {
             builder
@@ -129,6 +140,8 @@ public class MainController implements Initializable {
                     .append(mondayCleaner.getTimeOutProperty().getValue() + "\n\n");
         });
         System.out.println(builder.toString());
+
+        Properties properties = new Properties();
     }
 
     public void handleCreateUser(){
@@ -140,8 +153,9 @@ public class MainController implements Initializable {
     }
 
     public void initMondayCleanupEntries(){
-        mondayCleaners = FXCollections.observableArrayList();
-        mondayCleaners.add(new MondayCleaner("Enter name","Enter time in","Enter time out"));
+        //Still need to get current db values
+        mondayCleaners = MondayCleanerDataAccess.getAll();
+
         nameColumn.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<MondayCleaner, String>, ObservableValue<String>>() {
                     @Override
@@ -212,8 +226,21 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         initMondayCleanupEntries();
+        if(!DayOfWeek.from(LocalDate.now()).name().equals("MONDAY")){
+           // mondayCleaners.clear();
+        }
+        MondayCleanerDataAccess.createNewTable();
+
         //usersContainer.getChildren().stream().forEach(userPane -> { ((UserPane) userPane).initLabels(); });
     }
+
+    public void refreshDB(){
+        //Refreshes db when the app is closed to respond to cell edits in the
+        // treetableview and prep the tableview when the app is opened.
+        MondayCleanerDataAccess.deleteAll();
+        mondayCleaners.forEach(MondayCleanerDataAccess::insert);
+    }
+
     private void updateListView() throws MalformedURLException {
         users = UserDataAccess.getInstance().getAll();
         users.forEach(user -> {
@@ -294,4 +321,13 @@ public class MainController implements Initializable {
         });
         return userPanes.get(name);
     }
+    private MondayCleaner getMondayCleaner(String name){
+        LinkedHashMap<String, MondayCleaner> m_mondayCleaners = new LinkedHashMap<>();
+        mondayCleaners.forEach(mondayCleaner -> {
+            m_mondayCleaners.put(mondayCleaner.getNameProperty().getValue(), mondayCleaner);
+        });
+        return m_mondayCleaners.get(name);
+    }
+
+
 }

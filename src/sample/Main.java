@@ -41,6 +41,8 @@ public class Main extends Application {
     @FXML
     private VBox usersContainer;
 
+    private MainController controller;
+
 
     private final ChangeListener<Number> onWidthResize = new ChangeListener<>() {
         @Override
@@ -61,6 +63,9 @@ public class Main extends Application {
             //signInInput.setMinHeight(n2.doubleValue()/12d);
         }
     };
+
+    public Main() throws IOException {
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -86,10 +91,21 @@ public class Main extends Application {
     }
 
     private Parent loadFXML(String name) throws IOException {
-        return FXMLLoader.load(getClass().getResource(name+".fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(name+".fxml"));
+        Parent fxml = loader.load();
+        controller = (MainController) loader.getController();
+        return fxml;
     }
 
     public static void main(String... args) throws Exception {
         launch(args);
     }
+
+    @Override
+    public void stop() throws Exception {
+        System.out.println("App closed");
+        controller.refreshDB();
+        super.stop();
+    }
+
 }
