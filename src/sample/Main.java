@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 
 public class Main extends Application {
+    //Since no websockets exist currently, this app cannot detect and respond to rest operations done by the web app
 
     @FXML
     private Parent layout;

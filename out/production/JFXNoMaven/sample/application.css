@@ -98,7 +98,7 @@
     -fx-border-insets: 1.5em 0 0 0;
     -fx-background-insets: 1.5em 0 0 0;
 }
-.scroll-pane{
+.custom-scroll-pane{
     -fx-background-color:#0E1818;
      -fx-padding: 3.5em;
      -fx-border-insets: 3.5em;
@@ -118,6 +118,20 @@
     -fx-padding: 1em 0 0 0;
     -fx-font-size:15;
 }
+.table-container{
+     -fx-padding: 4em;
+     -fx-border-insets: 4em;
+     -fx-background-insets: 4em;
+}
+.custom-tree-table-view{
+}
+.tab-3-button{
+    -fx-background-color:#FF073a;
+    -fx-text-fill:whitesmoke;
+    -fx-font-weight:bold;
+    -fx-font-size:14px;
+}
+
 
 
 

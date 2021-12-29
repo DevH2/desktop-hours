@@ -4,13 +4,15 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXSnackbar?>
-<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -50,15 +52,17 @@
                               </DropShadow>
                            </input>
                         </DropShadow>
-                     </effect></TextField>
+                     </effect>
+                  </TextField>
                </children>
             </HBox>
-            <ScrollPane hbarPolicy="NEVER" pannable="true" styleClass="scroll-pane" stylesheets="application.css">
+            <ScrollPane hbarPolicy="NEVER" pannable="true" styleClass="custom-scroll-pane" stylesheets="application.css">
                <content>
                   <VBox fx:id="usersContainer" alignment="CENTER" styleClass="users-container" stylesheets="application.css" />
                </content>
             </ScrollPane>
-         </children></VBox>
+         </children>
+      </VBox>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="right" stylesheets="@application.css" GridPane.columnIndex="1">
          <children>
             <Label styleClass="title" stylesheets="application.css" text="Application Title" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
@@ -80,7 +84,8 @@
                                           <JFXCheckBox styleClass="password-checkbox" stylesheets="application.css" text="Show Password" textFill="#4d4d4d">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
-                                             </font></JFXCheckBox>
+                                             </font>
+                                          </JFXCheckBox>
                                        </children>
                                        <opaqueInsets>
                                           <Insets />
@@ -122,18 +127,37 @@
                                <children>
 
 
-                               </children></AnchorPane>
+                               </children>
+                           </AnchorPane>
                        </content>
                    </Tab>
                    <Tab text="Monday Cleanup">
                        <content>
-                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <JFXTextArea layoutX="14.0" layoutY="14.0" prefHeight="186.0" prefWidth="211.0" />
-                           </children></AnchorPane>
+                           <VBox alignment="TOP_CENTER" styleClass="table-container" stylesheets="application.css">
+                               <children>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <JFXButton fx:id="addEntryButton" buttonType="RAISED" onAction="#addMondayCleanupEntry" prefHeight="50" styleClass="tab-3-button" stylesheets="application.css" text="Add Entry" />
+                                    <JFXButton fx:id="deleteEntryButton" buttonType="RAISED" onAction="#deleteMondayCleanupEntry" prefHeight="50" styleClass="tab-3-button" stylesheets="application.css" text="Delete Entry" />
+                                 </children>
+                              </HBox>
+                                  <JFXTreeTableView fx:id="treeTableView" editable="true" layoutX="14.0" layoutY="14.0" styleClass="custom-tree-table-view" stylesheets="application.css">
+                                     <columns>
+                                        <JFXTreeTableColumn fx:id="nameColumn" text="Name" />
+                                        <JFXTreeTableColumn fx:id="timeInColumn" text="Time In" />
+                                         <JFXTreeTableColumn fx:id="timeOutColumn" text="Time Out" />
+                                     </columns>
+                                 <columnResizePolicy>
+                                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                                  </JFXTreeTableView>
+                                  
+                               </children>
+                           </VBox>
                        </content>
                    </Tab>
-               </tabs></TabPane>
+               </tabs>
+            </TabPane>
          </children>
       </AnchorPane>
    </children>
