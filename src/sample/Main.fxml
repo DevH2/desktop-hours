@@ -138,7 +138,8 @@
                                           <JFXButton />
                                        </children>
                                     </HBox>
-                                    <JFXButton />
+                                    <JFXTextField fx:id="emailField"/>
+                                    <JFXButton onAction="#emailMondayCleanupRoster" prefWidth="129.0" text="EMAIL MONDAY CLEANUP" />
                                  </children>
                               </VBox>
                            </children>

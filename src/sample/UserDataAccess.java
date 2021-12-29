@@ -29,6 +29,8 @@ public class UserDataAccess {
     private URL getUserURL = new URL(Constants.REST_URL+"/getuserdata?password="+password);
     private final URL signInURL = new URL(Constants.REST_URL+"/signin");
     private final URL signOutURL = new URL(Constants.REST_URL+"/signout");
+    private final URL addUserURL = new URL(Constants.REST_URL+"/adduser");
+    private final URL deleteUserURL = new URL(Constants.REST_URL+"/deleteuser");
 
     private final HttpClient httpClient = HttpClient.newBuilder().build();
 
@@ -162,9 +164,6 @@ public class UserDataAccess {
                 return "Error";
             }
         }
-    }
-    public void update(){
-
     }
 
     public void delete(){

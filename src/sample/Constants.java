@@ -8,4 +8,13 @@ public class Constants {
     public static final String APP_TITLE = "Team4159 Login";
     public static final float NOTIFICATION_TIME = 1000f;
     public static final String REST_URL = "https://hours.team4159.org/users";
+
+    //Make sure this is always in caps
+    public static final String RESET_TABLEVIEW_DAY = "WEDNESDAY";
+
+    //Credentials provided by mailtrap
+    public static final int SMTP_PORT = 587;
+    public static final String SMTP_USERNAME = "eb7318584fdc1e";
+    public static final String SMTP_PASSWORD = "f665f4f87e7dfa";
+
 }

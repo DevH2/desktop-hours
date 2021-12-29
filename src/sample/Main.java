@@ -21,6 +21,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Main extends Application {
@@ -104,6 +106,7 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         System.out.println("App closed");
+        //if(DayOfWeek.from(LocalDate.now()).name().equals(Constants.RESET_TABLEVIEW_DAY)) MondayCleanerDataAccess.deleteAll();
         controller.refreshDB();
         super.stop();
     }

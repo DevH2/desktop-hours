@@ -28,11 +28,12 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
+import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.mail.internet.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -44,6 +45,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.net.*;
 
 public class MainController implements Initializable {
     //Since no websockets exist currently, this app cannot detect and respond to rest operations done by the web app.
@@ -79,7 +81,8 @@ public class MainController implements Initializable {
     private JFXTreeTableView treeTableView;
     @FXML
     private TextField tableViewSearchBar;
-
+    @FXML
+    private JFXTextField emailField;
 
     public MainController() throws MalformedURLException {
     }
@@ -141,7 +144,38 @@ public class MainController implements Initializable {
         });
         System.out.println(builder.toString());
 
+        //Configure properties
         Properties properties = new Properties();
+        properties.put("mail.smtp.auth", true);
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host","smtp.mailtrap.io");
+        properties.put("mail.smtp.port", String.valueOf(Constants.SMTP_PORT));
+        properties.put("mail.smtp.ssl.trust", "smtp.mailtrap.io");
+        Authenticator authenticator = new Authenticator(){
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(Constants.SMTP_USERNAME, Constants.SMTP_PASSWORD);
+            }
+        };
+        Session session = Session.getInstance(properties, authenticator);
+        Message message = new MimeMessage(session);
+        try {
+            String formattedDate = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH).format(LocalDateTime.now());
+            message.setFrom(new InternetAddress(emailField.getText()));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(emailField.getText()));
+            message.setSubject(" Monday Cleanup Roster");
+
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(builder.toString(), "text/html; charset=utf-8");
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+            message.setContent(multipart);
+            Transport.send(message);
+            System.out.println("Sent email");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        emailField.setText("");
     }
 
     public void handleCreateUser(){
@@ -328,6 +362,4 @@ public class MainController implements Initializable {
         });
         return m_mondayCleaners.get(name);
     }
-
-
 }
