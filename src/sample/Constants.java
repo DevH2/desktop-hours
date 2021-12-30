@@ -14,7 +14,7 @@ public class Constants {
 
     //Credentials provided by mailtrap
     public static final int SMTP_PORT = 587;
-    public static final String SMTP_USERNAME = "eb7318584fdc1e";
-    public static final String SMTP_PASSWORD = "f665f4f87e7dfa";
+    public static final String SMTP_USERNAME = "1ea7711294846e";
+    public static final String SMTP_PASSWORD = "c1489e5d1c1918";
 
 }

@@ -53,11 +53,23 @@ public class UserDataAccess {
             .uri(URI.create(signOutURL.toString()))
             .header("Content-Type", "application/json")
             .build();
+    private HttpRequest deleteUserRequest = HttpRequest.newBuilder()
+            .POST(HttpRequest.BodyPublishers.ofString(" Dummy Body"))
+            .uri(URI.create(deleteUserURL.toString()))
+            .header("Content-Type","application/json")
+            .build();
+    private HttpRequest addUserRequest = HttpRequest.newBuilder()
+            .POST(HttpRequest.BodyPublishers.ofString("Dummy body"))
+            .uri(URI.create(addUserURL.toString()))
+            .header("Content-Type", "application/json")
+            .build();
 
     private HttpResponse getUsersResponse;
     private HttpResponse getUserDataResponse;
     private HttpResponse signInResponse;
     private HttpResponse signOutResponse;
+    private HttpResponse deleteUserResponse;
+    private HttpResponse addUserResponse;
 
     private List<User> users = new ArrayList<>();
     private static UserDataAccess userDataAccess;
@@ -72,10 +84,22 @@ public class UserDataAccess {
     }
 
     //Creates user
-    public void save(String name, String password){
-        HashMap<String, String> requestBody = new HashMap<>();
-        //requestBody.put()
-        System.out.println("Created user");
+    public void save(String firstName, String lastName, String password){
+        AddUserData requestBody = new AddUserData(firstName, lastName, password);
+        String requestBodyJSON = gson.toJson(requestBody);
+        addUserRequest = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBodyJSON))
+                .uri(URI.create(addUserResponse.toString()))
+                .header("Content-Type","application/json")
+                .build();
+        try{
+            addUserResponse = httpClient.send(addUserRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println(addUserResponse.body().toString());
+            System.out.println("Added user " + firstName + " " + lastName);
+        } catch (InterruptedException | IOException e) {
+            System.out.println("Could not add user");
+            e.printStackTrace();
+        }
     }
 
     public List<User> getAll(){
@@ -166,8 +190,22 @@ public class UserDataAccess {
         }
     }
 
-    public void delete(){
-
+    public void delete(String password){
+        this.password = password;
+        HashMap<String, String> requestBody = new HashMap<>();
+        requestBody.put("password", this.password);
+        String requestBodyJSON = gson.toJson(requestBody);
+        try {
+            deleteUserRequest = HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBodyJSON))
+                    .uri(URI.create(deleteUserURL.toString()))
+                    .header("Content-Type","application/json")
+                    .build();
+            deleteUserResponse = httpClient.send(deleteUserRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Deleted specified user");
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public User serializeUser(String json){

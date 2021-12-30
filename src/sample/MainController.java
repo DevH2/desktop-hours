@@ -83,6 +83,8 @@ public class MainController implements Initializable {
     private TextField tableViewSearchBar;
     @FXML
     private JFXTextField emailField;
+    @FXML
+    private JFXTextField emailPasswordField;
 
     public MainController() throws MalformedURLException {
     }
@@ -132,29 +134,33 @@ public class MainController implements Initializable {
     }
 
     public void emailMondayCleanupRoster(){
-        //Forming the string
+        //Note: Using google's mail server here requires the person calling this function
+        //to have 2FA and Use Less Secure Apps in Gmail Account > Security disabled since
+        //this is not a Google app.
+
+        //Forming entries into the string
         StringBuilder builder = new StringBuilder();
         mondayCleaners.forEach(mondayCleaner -> {
             builder
-                    .append(mondayCleaner.getNameProperty().getValue() + "   ")
-                    .append("Time In: ")
-                    .append(mondayCleaner.getTimeInProperty().getValue() + "   ")
-                    .append("Time Out: ")
+                    .append(mondayCleaner.getNameProperty().getValue() + " | ")
+                    .append("In: ")
+                    .append(mondayCleaner.getTimeInProperty().getValue() + " | ")
+                    .append("Out: ")
                     .append(mondayCleaner.getTimeOutProperty().getValue() + "\n\n");
         });
         System.out.println(builder.toString());
 
-        //Configure properties
+        //Configure emailing properties, send email, clear text fields
         Properties properties = new Properties();
-        properties.put("mail.smtp.auth", true);
+        properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.host","smtp.mailtrap.io");
+        properties.put("mail.smtp.host","smtp.gmail.com");
         properties.put("mail.smtp.port", String.valueOf(Constants.SMTP_PORT));
-        properties.put("mail.smtp.ssl.trust", "smtp.mailtrap.io");
+        properties.put("mail.smtp.ssl.trust", "*");
         Authenticator authenticator = new Authenticator(){
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(Constants.SMTP_USERNAME, Constants.SMTP_PASSWORD);
+                return new PasswordAuthentication(emailField.getText(), "c1489e5d1c1918"); //:I
             }
         };
         Session session = Session.getInstance(properties, authenticator);
@@ -163,7 +169,7 @@ public class MainController implements Initializable {
             String formattedDate = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH).format(LocalDateTime.now());
             message.setFrom(new InternetAddress(emailField.getText()));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(emailField.getText()));
-            message.setSubject(" Monday Cleanup Roster");
+            message.setSubject("Monday Cleanup Roster");
 
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
             mimeBodyPart.setContent(builder.toString(), "text/html; charset=utf-8");
@@ -176,18 +182,33 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         emailField.setText("");
+        emailPasswordField.setText("");
     }
 
-    public void handleCreateUser(){
+    public void handleCreateUser() throws MalformedURLException {
+        //Note: The update function only updates current pane values.
+        //Send post req, do a get request for the new user,
+        //Then add a new UserPane to usersContainer corresponding to added user.
+
+        //UserDataAccess.getInstance().save("Dude", "Guy", "333333");
+        //User newUser = UserDataAccess.getInstance().get();
+        //users.add(newUser)
+        //usersContainer.getChildren().add(new UserPane())
 
     }
 
     public void handleDeleteUser(){
-
+        //Send post req, then delete the corresponding userPane from usersContainer
+        //Also delete that User in users along with the pane.
+        //users.remove(getUser());
+        //usersContainer.getChildren().remove(getUserPane(""));
+        //UserDataAccess.getInstance().delete();
     }
 
     public void initMondayCleanupEntries(){
-        //Still need to get current db values
+        //Get all sqlite entries, which are mapped to a list.
+        //Then initialize and set the type of cell data and make them editable by making the cell edit text fields
+        //Then initialize and create the jfxtreetableview root node and map it to the list
         mondayCleaners = MondayCleanerDataAccess.getAll();
 
         nameColumn.setCellValueFactory(
@@ -276,12 +297,14 @@ public class MainController implements Initializable {
     }
 
     private void updateListView() throws MalformedURLException {
+        //Updates the CURRENT user panes' values.
         users = UserDataAccess.getInstance().getAll();
         users.forEach(user -> {
             try {
                 //Need to resolve updating total time not only when the timer is moving
                 UserPane pane = getUserPane(user.getName());
                 pane.setTotalTime(user.getTotalTime());
+
                 //Resorting to changing prop here to update totalTime on signout
                 // as you can't bind 2 properties to one unless its a BooleanProp.
                 String currentValue = pane.getDisplayedTimeInProp().getValue();
@@ -355,6 +378,15 @@ public class MainController implements Initializable {
         });
         return userPanes.get(name);
     }
+
+    private User getUser(String name){
+        LinkedHashMap<String, User> userList = new LinkedHashMap<>();
+        users.forEach(user -> {
+            userList.put(user.getName(), user);
+        });
+        return userList.get(name);
+    }
+
     private MondayCleaner getMondayCleaner(String name){
         LinkedHashMap<String, MondayCleaner> m_mondayCleaners = new LinkedHashMap<>();
         mondayCleaners.forEach(mondayCleaner -> {

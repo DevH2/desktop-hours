@@ -134,11 +134,12 @@
                                     <JFXTextField />
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <JFXButton />
-                                          <JFXButton />
+                                          <JFXButton text="Create User" fx:id="addUserButton" onAction="#handleCreateUser"/>
+                                          <JFXButton text="Delete User" fx:id="deleteUserButton" onAction="#handleDeleteUser"/>
                                        </children>
                                     </HBox>
-                                    <JFXTextField fx:id="emailField"/>
+                                    <JFXTextField fx:id="emailField" />
+                                    <JFXTextField fx:id="emailPasswordField" />
                                     <JFXButton onAction="#emailMondayCleanupRoster" prefWidth="129.0" text="EMAIL MONDAY CLEANUP" />
                                  </children>
                               </VBox>
