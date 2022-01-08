@@ -80,6 +80,8 @@ public class Main extends Application {
         primaryStage.getScene().widthProperty().addListener(onWidthResize);
         primaryStage.getScene().heightProperty().addListener(onHeightResize);
         System.out.println(primaryStage.getScene() + " Primary Stage scene");
+
+        primaryStage.setWidth(primaryStage.getWidth()+.1); //lazily call the change listeners
     }
 
     private void initStage(Stage primaryStage) throws IOException{
@@ -106,8 +108,9 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         System.out.println("App closed");
-        //if(DayOfWeek.from(LocalDate.now()).name().equals(Constants.RESET_TABLEVIEW_DAY)) MondayCleanerDataAccess.deleteAll();
         controller.refreshDB();
+        if(DayOfWeek.from(LocalDate.now()).name().equals(Constants.RESET_TABLEVIEW_DAY))
+            MondayCleanerDataAccess.deleteAll();
         super.stop();
     }
 

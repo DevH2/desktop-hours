@@ -8,6 +8,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -85,6 +86,18 @@ public class MainController implements Initializable {
     private JFXTextField emailField;
     @FXML
     private JFXTextField emailPasswordField;
+    @FXML
+    private TabPane rightTabPane;
+    @FXML
+    private JFXDialog accessAdminPanelDialog;
+    @FXML
+    private Tab adminPanelTab;
+    @FXML
+    private JFXTextField addFirstNameText;
+    @FXML
+    private JFXTextField addLastNameText;
+    @FXML
+    private JFXTextField addPasswordText;
 
     public MainController() throws MalformedURLException {
     }
@@ -95,18 +108,27 @@ public class MainController implements Initializable {
         String signedInOrOut = UserDataAccess.getInstance().signInOrOut(currentUser.getIsSignedIn(), signInInput.getText(), currentUser.getName());
         if(signedInOrOut.equals("Successfully signed in")){
             getUserPane(currentUser.getName()).getTimeline().playFromStart();
-            //System.out.println("playing timeline");
+            try {
+                updateListView();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         } else if(signedInOrOut.equals("Successfully signed out")){
-            //System.out.println("Stopped timeline");
-            getUserPane(currentUser.getName()).getTimeline().pause();
+            System.out.println("Stopped timeline");
+            try {
+                updateListView();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            //getUserPane(currentUser.getName()).getTimeline().pause(); don't need this for now at all
         } else return;
         signInInput.setText("");
 
-        try {
+        /*try {
             updateListView();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
+        }*/
         //Doing this synchronously also causes the Rippler to wait
     }
 
@@ -185,16 +207,25 @@ public class MainController implements Initializable {
         emailPasswordField.setText("");
     }
 
-    public void handleCreateUser() throws MalformedURLException {
+    public void handleCreateUser() throws IOException, InterruptedException {
         //Note: The update function only updates current pane values.
         //Send post req, do a get request for the new user,
         //Then add a new UserPane to usersContainer corresponding to added user.
-
-        //UserDataAccess.getInstance().save("Dude", "Guy", "333333");
-        //User newUser = UserDataAccess.getInstance().get();
-        //users.add(newUser)
-        //usersContainer.getChildren().add(new UserPane())
-
+        UserDataAccess.getInstance().save(addFirstNameText.getText(), addLastNameText.getText(),addPasswordText.getText());
+        users = UserDataAccess.getInstance().getAll();
+        User newUser = getUser(addFirstNameText.getText() + " " + addLastNameText.getText());
+        try {
+            usersContainer.getChildren().add(
+                    new UserPane(
+                            newUser.getName(),
+                            newUser.getIsSignedIn(),
+                            newUser.getTimeIn(),
+                            newUser.getTotalTime()
+                    )
+            );
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void handleDeleteUser(){
@@ -277,16 +308,34 @@ public class MainController implements Initializable {
 
         try {
             initListView();
+            updateListView();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         initMondayCleanupEntries();
-        if(!DayOfWeek.from(LocalDate.now()).name().equals("MONDAY")){
-           // mondayCleaners.clear();
-        }
         MondayCleanerDataAccess.createNewTable();
 
-        //usersContainer.getChildren().stream().forEach(userPane -> { ((UserPane) userPane).initLabels(); });
+        //usersContainer.getChildren().stream().forEach(uknserPane -> { ((UserPane) userPane).initLabels(); });
+        searchBar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String ov, String nv) {
+                //if(!ov.equals(nv)){
+                    //usersContainer.getChildren().sort((pane1, pane2) -> {
+                        //String name1 = ((UserPane) pane1).getName().toLowerCase();
+                       // String name2 = ((UserPane) pane2).getName().toLowerCase();
+                       // return name1.compareTo(name2);
+                    //});
+                //} throws err
+            }
+        });
+        rightTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> observableValue, Tab tab, Tab t1) {
+                if(rightTabPane.getSelectionModel().getSelectedItem().equals(adminPanelTab)){
+                    accessAdminPanelDialog.show();
+                }
+            }
+        });
     }
 
     public void refreshDB(){
@@ -304,10 +353,12 @@ public class MainController implements Initializable {
                 //Need to resolve updating total time not only when the timer is moving
                 UserPane pane = getUserPane(user.getName());
                 pane.setTotalTime(user.getTotalTime());
+                pane.setSignInStatus(!user.getIsSignedIn());
 
                 //Resorting to changing prop here to update totalTime on signout
                 // as you can't bind 2 properties to one unless its a BooleanProp.
                 String currentValue = pane.getDisplayedTimeInProp().getValue();
+
                 pane.getDisplayedTimeInProp().setValue(currentValue.split(" ")[0] +" "+ user.getTotalTime());
 
                 pane.getSignInStatusLabel().setText(user.getIsSignedIn() ? "SIGNED OUT" : "SIGNED IN");
@@ -321,6 +372,7 @@ public class MainController implements Initializable {
     private void initListView() throws MalformedURLException {
         users = UserDataAccess.getInstance().getAll();
         usersContainer.getChildren().clear();
+
         users.forEach(user -> {
             UserPane component = null;
             try {

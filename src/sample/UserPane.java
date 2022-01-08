@@ -55,8 +55,13 @@ public class UserPane extends VBox {
         displayedTimeInProp = new SimpleStringProperty(displayedTimeIn + " " + totalTime);
         timeline = new Timeline();
         timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
-            displayedTimeIn++;
-            displayedTimeInProp.setValue((displayedTimeIn*1000+timeIn) + " " + this.totalTime);
+                if(this.signInStatus){
+                    displayedTimeIn++;
+                    displayedTimeInProp.setValue(""+(displayedTimeIn*1000+timeIn) + " " + formatTime(this.totalTime/1000));
+                } else {
+                    displayedTimeIn = 0;
+                    displayedTimeInProp.setValue("00:00:00 " + formatTime(this.totalTime/1000));
+                }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
 
@@ -85,6 +90,9 @@ public class UserPane extends VBox {
 
     public boolean getSignInStatus(){
         return signInStatus;
+    }
+    public void setSignInStatus(boolean status){
+        signInStatus = status;
     }
 
     public long getTimeIn(){
@@ -117,5 +125,16 @@ public class UserPane extends VBox {
     public SimpleStringProperty getDisplayedTimeInProp(){
         return displayedTimeInProp;
     }
+
+    private String formatTime(long timeInSeconds){
+        long secondsLeft = timeInSeconds % 3600 % 60;
+        int mins = (int)(Math.floor(timeInSeconds % 3600/60));
+        int hrs = (int)Math.floor(timeInSeconds/3600);
+        String HH = (hrs < 10 ? "0" : "") + hrs;
+        String MM = (mins<10 ? "0":"") + mins;
+        String SS = (secondsLeft < 10 ? "0":"") + secondsLeft;
+        return HH+":"+MM+":"+SS;
+    }
+
 }
 

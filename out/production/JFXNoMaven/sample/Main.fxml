@@ -43,7 +43,7 @@
             </HBox>
             <HBox alignment="CENTER">
                <children>
-                  <TextField fx:id="searchBar" promptText="Search user" style="-fx-background-color: #212121;" styleClass="search-bar">
+                  <TextField fx:id="searchBar" promptText="Search user" style="-fx-background-color: #212121;" styleClass="search-bar" visible="false">
                      <effect>
                         <DropShadow offsetX="-2.0" offsetY="-2.0">
                            <input>
@@ -68,7 +68,7 @@
       <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="right" stylesheets="@application.css" GridPane.columnIndex="1">
          <children>
             <Label styleClass="title" stylesheets="application.css" text="Application Title" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
-            <TabPane prefWidth="300.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="60">
+            <TabPane fx:id="rightTabPane" prefWidth="300.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="60">
                <tabs>
                    <Tab text="Sign In">
                      <content>
@@ -123,19 +123,20 @@
                         </VBox>
                      </content>
                    </Tab>
-                   <Tab text="Admin Panel">
+                   <Tab fx:id="adminPanelTab" text="Admin Panel">
                        <content>
                            <AnchorPane fx:id="userPanel" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <JFXDialog />
-                              <VBox prefHeight="200.0" prefWidth="100.0">
+                              <JFXDialog fx:id="accessAdminPanelDialog" />
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                                  <children>
-                                    <JFXTextField />
-                                    <JFXTextField />
+                                    <JFXTextField fx:id="addFirstNameText" />
+                                    <JFXTextField fx:id="addLastNameText" />
+                                    <JFXTextField fx:id="addPasswordText" />
                                     <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <JFXButton text="Create User" fx:id="addUserButton" onAction="#handleCreateUser"/>
-                                          <JFXButton />
+                                          <JFXButton fx:id="addUserButton" onAction="#handleCreateUser" text="Create User" />
+                                          <JFXButton fx:id="deleteUserButton" onAction="#handleDeleteUser" text="Delete User" />
                                        </children>
                                     </HBox>
                                     <JFXTextField fx:id="emailField" />
