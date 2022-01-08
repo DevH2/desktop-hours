@@ -348,6 +348,10 @@ public class MainController implements Initializable {
     private void updateListView() throws MalformedURLException {
         //Updates the CURRENT user panes' values.
         users = UserDataAccess.getInstance().getAll();
+        if(users == null){
+            System.out.println("Connect to the internet");
+            return;
+        }
         users.forEach(user -> {
             try {
                 //Need to resolve updating total time not only when the timer is moving
@@ -371,6 +375,10 @@ public class MainController implements Initializable {
     //Formerly known as refreshListView()
     private void initListView() throws MalformedURLException {
         users = UserDataAccess.getInstance().getAll();
+        if(users == null){
+            System.out.println("Connect to the internet");
+            return;
+        }
         usersContainer.getChildren().clear();
 
         users.forEach(user -> {

@@ -57,7 +57,7 @@ public class UserPane extends VBox {
         timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
                 if(this.signInStatus){
                     displayedTimeIn++;
-                    displayedTimeInProp.setValue(""+(displayedTimeIn*1000+timeIn) + " " + formatTime(this.totalTime/1000));
+                    displayedTimeInProp.setValue(formatTime(displayedTimeIn) + " " + formatTime(this.totalTime/1000));
                 } else {
                     displayedTimeIn = 0;
                     displayedTimeInProp.setValue("00:00:00 " + formatTime(this.totalTime/1000));
@@ -128,8 +128,8 @@ public class UserPane extends VBox {
 
     private String formatTime(long timeInSeconds){
         long secondsLeft = timeInSeconds % 3600 % 60;
-        int mins = (int)(Math.floor(timeInSeconds % 3600/60));
-        int hrs = (int)Math.floor(timeInSeconds/3600);
+        int mins = (int)(Math.floor(timeInSeconds % 3600/60f));
+        int hrs = (int)Math.floor(timeInSeconds/3600f);
         String HH = (hrs < 10 ? "0" : "") + hrs;
         String MM = (mins<10 ? "0":"") + mins;
         String SS = (secondsLeft < 10 ? "0":"") + secondsLeft;
