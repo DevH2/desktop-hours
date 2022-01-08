@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXSnackbar?>
 <?import com.jfoenix.controls.JFXTextField?>
@@ -112,7 +113,7 @@
                               </HBox>
                               <AnchorPane>
                                  <children>
-                                    <JFXSnackbar AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" fx:id="snackBar" stylesheets="application.css" />
+                                    <JFXSnackbar fx:id="snackBar" stylesheets="application.css" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
                                  </children></AnchorPane>
                            </children>
                            <effect>
@@ -138,28 +139,43 @@
                            <children>
                               <VBox alignment="CENTER" styleClass="admin-container" stylesheets="application.css" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
                                  <children>
-                                    <JFXDialog fx:id="accessAdminPanelDialog" prefHeight="19.0" prefWidth="322.0" />
-                                    <VBox alignment="CENTER">
+                                    <StackPane fx:id="dialogContainer">
                                        <children>
-                                          <JFXTextField fx:id="addFirstNameText" alignment="BOTTOM_LEFT" promptText="First " styleClass="admin-input" stylesheets="application.css" />
-                                          <JFXTextField fx:id="addLastNameText" alignment="BOTTOM_LEFT" promptText="Last" styleClass="admin-input" stylesheets="application.css" />
-                                          <JFXTextField fx:id="addPasswordText" alignment="BOTTOM_LEFT" promptText="Password" styleClass="admin-input" stylesheets="application.css" />
-                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                          <JFXDialog fx:id="accessAdminPanelDialog" prefHeight="19.0" prefWidth="322.0">
                                              <children>
-                                                <VBox>
-                                                   <children>
-                                                      <JFXButton fx:id="addUserButton" buttonType="RAISED" onAction="#handleCreateUser" styleClass="tab-3-button" stylesheets="application.css" text="CREATE USER" />
-                                                      <JFXButton fx:id="deleteUserButton" onAction="#handleDeleteUser" text="Delete User" visible="false" />
-                                                   </children>
-                                                </VBox>
+                                                <JFXDialogLayout style="-fx-background-color: whitesmoke;">
+                                                   <body>
+                                                      <JFXPasswordField fx:id="adminPasswordField" promptText="Enter Admin Password" />
+                                                   </body>
+                                                   <actions>
+                                                      <JFXButton onAction="#closeDialog" fx:id="dialogButton" text="SUBMIT" />
+                                                   </actions>
+                                                </JFXDialogLayout>
                                              </children>
-                                          </HBox>
-                                          <JFXTextField fx:id="emailField" alignment="BOTTOM_LEFT" promptText="Email" styleClass="admin-input" stylesheets="application.css" />
-                                          <JFXTextField fx:id="emailPasswordField" alignment="BOTTOM_LEFT" promptText="Pass" styleClass="admin-input" stylesheets="application.css" />
-                                          <JFXButton fx:id="monCleanupBtn" buttonType="RAISED" onAction="#emailMondayCleanupRoster" styleClass="tab-3-button" stylesheets="application.css" text="EMAIL MONDAY CLEANUP" />
-                                          <Label style="-fx-text-fill: whitesmoke; -fx-background-insets: 1em 0 0 0; -fx-border-insets: 1em 0 0 0; -fx-padding: 1em 0 0 0;" text="Note: Enable 2FA and enable Less Secure Apps" />
+                                          </JFXDialog>
+                                          <VBox alignment="CENTER">
+                                             <children>
+                                                <JFXTextField fx:id="addFirstNameText" alignment="BOTTOM_LEFT" promptText="First " styleClass="admin-input" stylesheets="application.css" />
+                                                <JFXTextField fx:id="addLastNameText" alignment="BOTTOM_LEFT" promptText="Last" styleClass="admin-input" stylesheets="application.css" />
+                                                <JFXTextField fx:id="addPasswordText" alignment="BOTTOM_LEFT" promptText="Password" styleClass="admin-input" stylesheets="application.css" />
+                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <VBox>
+                                                         <children>
+                                                            <JFXButton fx:id="addUserButton" buttonType="RAISED" onAction="#handleCreateUser" styleClass="tab-3-button" stylesheets="application.css" text="CREATE USER" />
+                                                            <JFXButton fx:id="deleteUserButton" onAction="#handleDeleteUser" text="Delete User" visible="false" />
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                                <JFXTextField fx:id="emailField" alignment="BOTTOM_LEFT" promptText="Email" styleClass="admin-input" stylesheets="application.css" />
+                                                <JFXTextField fx:id="emailPasswordField" alignment="BOTTOM_LEFT" promptText="Pass" styleClass="admin-input" stylesheets="application.css" />
+                                                <JFXButton fx:id="monCleanupBtn" buttonType="RAISED" onAction="#emailMondayCleanupRoster" styleClass="tab-3-button" stylesheets="application.css" text="EMAIL MONDAY CLEANUP" />
+                                                <Label style="-fx-text-fill: whitesmoke; -fx-background-insets: 1em 0 0 0; -fx-border-insets: 1em 0 0 0; -fx-padding: 1em 0 0 0;" text="Note: Enable 2FA and enable Less Secure Apps" />
+                                             </children>
+                                          </VBox>
                                        </children>
-                                    </VBox>
+                                    </StackPane>
                                  </children>
                                  <effect>
                                     <DropShadow offsetX="6.0" offsetY="6.0">

@@ -26,6 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -107,6 +108,10 @@ public class MainController implements Initializable {
     private JFXTextField signInInputShown;
     @FXML
     private JFXCheckBox checkBox;
+    @FXML
+    private StackPane dialogContainer;
+    @FXML
+    private JFXPasswordField adminPasswordField;
 
     private TextField currentSignInInput;
     private WebSocket.Listener ws;
@@ -338,6 +343,12 @@ public class MainController implements Initializable {
         treeTableView.setShowRoot(false);
     }
 
+    public void closeDialog(ActionEvent event) {
+        if(!adminPasswordField.getText().equals(Constants.ADMIN_PASSWORD)) return;
+        accessAdminPanelDialog.close();
+        adminPasswordField.setText("");
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         String formattedDate = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH).format(LocalDateTime.now());
@@ -352,6 +363,7 @@ public class MainController implements Initializable {
         }
         initMondayCleanupEntries();
         MondayCleanerDataAccess.createNewTable();
+        accessAdminPanelDialog.setDialogContainer(dialogContainer);
 
         //usersContainer.getChildren().stream().forEach(uknserPane -> { ((UserPane) userPane).initLabels(); });
         searchBar.textProperty().addListener(new ChangeListener<String>() {

@@ -2,6 +2,8 @@ package sample;
 
 import javafx.stage.Screen;
 
+import java.net.URI;
+
 public class Constants {
     public static final int INIT_WIDTH = 800;
     public static final int INIT_HEIGHT = Math.round(800*(9f/16f));
@@ -16,5 +18,7 @@ public class Constants {
     public static final int SMTP_PORT = 587;
     public static final String SMTP_USERNAME = "1ea7711294846e";
     public static final String SMTP_PASSWORD = "c1489e5d1c1918";
+    public static final String ADMIN_PASSWORD = "berd";
+    public static final URI socketURI = URI.create("https://hours.team4159.org/websocket");
 
 }
