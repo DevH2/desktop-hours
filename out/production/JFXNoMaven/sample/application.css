@@ -17,13 +17,16 @@
     -fx-border-insets: 4em;
     -fx-background-insets: 4em;
     -jfx-focus-color:#FF073A;
-     /*-fx-prompt-text-fill: whitesmoke;
-     -fx-text-inner-color: whitesmoke;*/
+     -fx-text-inner-color: whitesmoke;
      -fx-font-weight:bold;
+     -fx-font-size:16px;
+}
+.sign-in-input:focused{
+    -fx-prompt-text-fill: whitesmoke;
 }
 .sign-in-container{
     -fx-background-color:#212121;
-    -fx-background-radius:10px;
+    -fx-background-radius:8px;
     /*JavaFX workaround for margin*/
     -fx-padding: 64px;
     -fx-border-insets: 64px;
@@ -38,6 +41,17 @@
     -jfx-checked-color:#ff073a;
     -fx-translate-x:4em;
 }
+.password-checkbox:hover{
+    -jfx-checked-color:#ff073a;
+    -fx-translate-x:4em;
+    -fx-text-fill:whitesmoke;
+}
+.password-checkbox:selected{
+     -jfx-checked-color:#ff073a;
+     -fx-translate-x:4em;
+     -fx-text-fill:#4D4D4D;
+}
+
 .left-title{
     -fx-font-weight:500;
     -fx-text-fill:whitesmoke;
@@ -124,12 +138,52 @@
      -fx-background-insets: 4em;
 }
 .custom-tree-table-view{
+     -fx-padding: 2em 2.5em .5em 2.5em;
+     -fx-border-insets: 2em 2.5em .5em 2.5em;
+     -fx-background-insets: 2em 2.5em .5em 2.5em;
 }
 .tab-3-button{
-    -fx-background-color:#FF073a;
+    -fx-background-color:#FF073A;
     -fx-text-fill:whitesmoke;
     -fx-font-weight:bold;
     -fx-font-size:14px;
+    -fx-padding: 1em 0 0 0;
+    -fx-border-insets: 1em 0 0 0;
+    -fx-background-insets: 1em 0 0 0;
+}
+.table-search-bar{
+    -fx-font-size:16px;
+    -fx-padding: 1em 0 0 0;
+    -fx-border-insets: 1em 0 0 0;
+    -fx-background-insets: 1em 0 0 0;
+}
+.admin-input{
+    -fx-padding: 1em 4em .2em 4em;
+    -fx-border-insets: 1em 4em .2em 4em;
+    -fx-background-insets: 1em 4em .2em 4 em;
+    -jfx-focus-color:#FF073A;
+    -fx-text-inner-color: whitesmoke;
+    -fx-font-weight:bold;
+    -fx-font-size:14px;
+}
+.admin-container{
+    -fx-background-color:#212121;
+    -fx-background-radius:8px;
+    /*JavaFX workaround for margin*/
+    -fx-padding: 2em 4em 2em 4em;
+    -fx-border-insets: 2em 4em 2em 4em;
+    -fx-background-insets: 2em 4em 2em 4em;
+}
+.jfx-snackbar-content{
+    -fx-background-color:#4D4D4D;
+
+
+}
+.jfx-snackbar-toast{
+    -fx-text-fill:whitesmoke;
+    -fx-font-size:14px;
+    -fx-font-weight:bold;
+
 }
 
 

@@ -25,7 +25,10 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -38,6 +41,7 @@ import java.lang.reflect.Array;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.WebSocket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -47,6 +51,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.net.*;
+import java.util.concurrent.CompletionStage;
 
 public class MainController implements Initializable {
     //Since no websockets exist currently, this app cannot detect and respond to rest operations done by the web app.
@@ -98,31 +103,54 @@ public class MainController implements Initializable {
     private JFXTextField addLastNameText;
     @FXML
     private JFXTextField addPasswordText;
+    @FXML
+    private JFXTextField signInInputShown;
+    @FXML
+    private JFXCheckBox checkBox;
+
+    private TextField currentSignInInput;
+    private WebSocket.Listener ws;
+
 
     public MainController() throws MalformedURLException {
     }
 
 
-    public void handleSignIn(ActionEvent event) throws IOException, InterruptedException {
-        UserData currentUser = UserDataAccess.getInstance().get(signInInput.getText());
-        String signedInOrOut = UserDataAccess.getInstance().signInOrOut(currentUser.getIsSignedIn(), signInInput.getText(), currentUser.getName());
-        if(signedInOrOut.equals("Successfully signed in")){
-            getUserPane(currentUser.getName()).getTimeline().playFromStart();
-            try {
-                updateListView();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+    public void handleSignIn(ActionEvent event){
+        try {
+            UserData currentUser = UserDataAccess.getInstance().get(currentSignInInput.getText());
+            String signedInOrOut = UserDataAccess.getInstance().signInOrOut(currentUser.getIsSignedIn(), currentSignInInput.getText(), currentUser.getName());
+            if (signedInOrOut.equals("Successfully signed in")) {
+                getUserPane(currentUser.getName()).getTimeline().playFromStart(); //Not really a need for this anymore
+                try {
+                    updateListView();
+                    showSnackBar("Signed in as " + currentUser.getName());
+                } catch (MalformedURLException e) {
+                    showSnackBar("Unable to sign in");
+                    e.printStackTrace();
+                }
+            } else if (signedInOrOut.equals("Successfully signed out")) {
+                //System.out.println("Stopped timeline");
+                try {
+                    updateListView();
+                    showSnackBar("Signed out as " + currentUser.getName());
+                } catch (MalformedURLException e) {
+                    showSnackBar("Unable to sign out");
+                    e.printStackTrace();
+                }
+                //getUserPane(currentUser.getName()).getTimeline().pause(); don't need this for now at all
+            } else {
+                showSnackBar("Unable to sign in or out");
+                return;
             }
-        } else if(signedInOrOut.equals("Successfully signed out")){
-            System.out.println("Stopped timeline");
-            try {
-                updateListView();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            //getUserPane(currentUser.getName()).getTimeline().pause(); don't need this for now at all
-        } else return;
-        signInInput.setText("");
+        } catch (InterruptedException | IOException e) {
+            showSnackBar("Unable to sign in or out");
+            e.printStackTrace();
+        } finally {
+            signInInput.setText("");
+            signInInputShown.setText("");
+        }
+
 
         /*try {
             updateListView();
@@ -201,6 +229,7 @@ public class MainController implements Initializable {
             Transport.send(message);
             System.out.println("Sent email");
         } catch (MessagingException e) {
+            System.out.println("Could not send email");
             e.printStackTrace();
         }
         emailField.setText("");
@@ -211,6 +240,14 @@ public class MainController implements Initializable {
         //Note: The update function only updates current pane values.
         //Send post req, do a get request for the new user,
         //Then add a new UserPane to usersContainer corresponding to added user.
+        if(
+            addFirstNameText.getText().isBlank() ||
+            addLastNameText.getText().isBlank() ||
+            addPasswordText.getText().isBlank()
+        ){
+            System.out.println("Empty fields");
+            return;
+        }
         UserDataAccess.getInstance().save(addFirstNameText.getText(), addLastNameText.getText(),addPasswordText.getText());
         users = UserDataAccess.getInstance().getAll();
         User newUser = getUser(addFirstNameText.getText() + " " + addLastNameText.getText());
@@ -226,6 +263,7 @@ public class MainController implements Initializable {
         } catch(InterruptedException e) {
             e.printStackTrace();
         }
+        updateListView();
     }
 
     public void handleDeleteUser(){
@@ -336,6 +374,38 @@ public class MainController implements Initializable {
                 }
             }
         });
+        signInInput.textProperty().bindBidirectional(signInInputShown.textProperty());
+        currentSignInInput = signInInput;
+        checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                if(t1){
+                   //currentSignInInput.setText(signInInput.getText().trim());
+                   signInInput.setVisible(false);
+                   signInInputShown.setVisible(true);
+                   currentSignInInput = signInInputShown;
+                   System.out.println("Swapped checked");
+                }
+                else{
+                  //signInInput.setText(signInInputShown.getText().trim());
+                  signInInputShown.setVisible(false);
+                  signInInput.setVisible(true);
+                  currentSignInInput = signInInput;
+                  System.out.println("Swapped unchecked");
+                }
+            }
+        });
+        ws = new WebSocket.Listener() {
+            @Override
+            public void onOpen(WebSocket webSocket) {
+
+            }
+
+            @Override
+            public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+                return null;
+            }
+        };
     }
 
     public void refreshDB(){
@@ -366,6 +436,9 @@ public class MainController implements Initializable {
                 pane.getDisplayedTimeInProp().setValue(currentValue.split(" ")[0] +" "+ user.getTotalTime());
 
                 pane.getSignInStatusLabel().setText(user.getIsSignedIn() ? "SIGNED OUT" : "SIGNED IN");
+                if(pane.getSignInStatus())
+                    pane.getSignInStatusLabel().setTextFill(Color.GREEN);
+                else pane.getSignInStatusLabel().setTextFill(Color.RED);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -409,15 +482,9 @@ public class MainController implements Initializable {
     }
 
     private void showSnackBar(String message){
-        Timeline timeline = new Timeline(new KeyFrame(
-                Duration.seconds(1),
-                actionEvent -> {
-                    snackBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(message)));
-                })
-        );
-        timeline.setCycleCount(1);
-        timeline.playFromStart();
-        snackBar.close();
+        JFXSnackbarLayout layout = new JFXSnackbarLayout(message.toUpperCase());
+        snackBar.fireEvent(
+                new JFXSnackbar.SnackbarEvent(layout, Duration.seconds(2)));
         return;
     }
 

@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -55,12 +56,15 @@ public class UserPane extends VBox {
         displayedTimeInProp = new SimpleStringProperty(displayedTimeIn + " " + totalTime);
         timeline = new Timeline();
         timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
+                //Idk why app does not start out with colors if I do this in main controller
                 if(this.signInStatus){
                     displayedTimeIn++;
                     displayedTimeInProp.setValue(formatTime(displayedTimeIn) + " " + formatTime(this.totalTime/1000));
+                    signInStatusLabel.setTextFill(Color.LIME);
                 } else {
                     displayedTimeIn = 0;
                     displayedTimeInProp.setValue("00:00:00 " + formatTime(this.totalTime/1000));
+                    signInStatusLabel.setTextFill(Color.web("#FF073A"));
                 }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -81,7 +85,7 @@ public class UserPane extends VBox {
         timeInLabel.setText(displayedTimeIn + " " + totalTime);//too lazy to deal with adaptability for totalTimeLabel
         timeInLabel.textProperty().bind(displayedTimeInProp);
         //totalTimeLabel.setText(totalTime + "");
-
+        timeline.playFromStart();
     }
 
     public String getName(){
